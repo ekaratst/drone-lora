@@ -68,10 +68,11 @@ void loop()
     {
       Serial.println("Receive failed");
     }
-    if(packetnum==30)
-    {
-      Serial.println("Completed!!");
-      while(1);
-    }
+//    if(packetnum==30)
+//    {
+//      Serial.println("Completed!!");
+//      while(1);
+//    }
+    //Serial.flush();
   }
 }
