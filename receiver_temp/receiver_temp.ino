@@ -58,9 +58,9 @@ void loop()
     if (rf95.recv(buf, &len))
     {
       digitalWrite(LED, HIGH);
-      Serial.print("Got: ");
+      //Serial.print("Got: ");
       Serial.println((char*)buf);
-       Serial.print("RSSI: ");
+      Serial.print("RSSI: ");
       Serial.println(rf95.lastRssi(), DEC);
       packetnum++;
     }
@@ -71,7 +71,7 @@ void loop()
 //    if(packetnum==30)
 //    {
 //      Serial.println("Completed!!");
-//      while(1);
+//       while(1);
 //    }
     //Serial.flush();
   }

@@ -2,22 +2,21 @@ import serial
 
 def main():
     lora_data = serial.Serial("/dev/ttyACM0", 9600, timeout=1)
-    data_read = []
-    count = 1
-    while count < 6:
-        #data_read = lora_data.read(2000)
-        #data_read = lora_data.readline()
-        #print(len(lora_data.readline()))
-        print("{0} len: {1}".format(lora_data.readline(),len(lora_data.readline())))
-        if len(lora_data.readline()) == 0:
-            continue
-        data_read.append(lora_data.readline())
-        #if data_read[0] == "R":
-         #   print("okkkk")
-        #print(data_read)
-        #print(count)
-        count = count + 1
-    print(data_read)
-            
+    write_to_file_path = ["output_5m", "output_10m"]
+    is_checked_5m = False
+    for i in write_to_file_path:
+        output_file = open(i, "w+")
+        count = 1
+        while count < 31:
+            line = lora_data.readline()
+            line = line.decode("utf-8")
+            length_data = len(line)
+            print(line)
+            print(count)
+            output_file.write(line)
+            if(length_data == 11):
+                count = count + 1
+        is_checked_5m = True
+   
 if __name__ == "__main__":
     main()
