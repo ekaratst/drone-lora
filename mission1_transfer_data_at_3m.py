@@ -39,34 +39,30 @@ def arm_and_takeoff(aTargetAltitude):
 
 
 def main():
+    lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1)  
+    write_to_file_path = "output_5m"
+    output_file = open(write_to_file_path, "w+")
+    count = 1
+    arm_and_takeoff(3) 
+    print("take off complete")
     now = time.time()
     future = now + 120
-    while time.time() < future:
-        lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1)  
-        write_to_file_path = "output_5m"
-        #is_checked_5m = False
-        # for i in write_to_file_path:
-        output_file = open(write_to_file_path, "w+")
-        count = 1
-        arm_and_takeoff(3) 
-        print("take off complete")
-        while count < 31:
-            line = lora_data.readline()
-            line = line.decode("utf-8")
-            length_data = len(line)
-            print(line)
-            print(count)
-            output_file.write(line)
-            if(length_data == 11):
-                count = count + 1
-        # is_checked_5m = True
-        print("Now let's land")
-        vehicle.mode = VehicleMode("LAND")  
-        vehicle.close()   
-    if count < 31:
-        print("Now let's land")
-        vehicle.mode = VehicleMode("LAND")  
-        vehicle.close()   
+    while count < 31:
+        if time.time() >= future:
+            print("..timeout..!!")
+            is_completed_data = False
+            break
+        line = lora_data.readline()
+        line = line.decode("utf-8")
+        length_data = len(line)
+        print(line)
+        print(count)
+        output_file.write(line)
+        if(length_data == 11):
+            count = count + 1
+    print("Now let's land")
+    vehicle.mode = VehicleMode("LAND")  
+    vehicle.close()   
    
 if __name__ == "__main__":
     main()
