@@ -29,7 +29,7 @@ def arm_and_takeoff(aTargetAltitude):
 
     #check that vehicle has reached takeoff altitude
     while True:
-    current_altitude =  vehicle.location.global_relative_frame.alt
+        current_altitude =  vehicle.location.global_relative_frame.alt
         print(" Altitude: %f  Desired: %f" %(current_altitude, aTargetAltitude))
         # Break and return from function just below target altitude
         if current_altitude >= aTargetAltitude*0.95:
@@ -37,29 +37,36 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
 
+
 def main():
-    lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1)
-    write_to_file_path = ["output_5m", "output_10m"]
-    is_checked_5m = False
-    # for i in write_to_file_path:
-    #     output_file = open(i, "w+")
-    #     count = 1
-    print("taking off !!")
-    arm_and_takeoff(3)
-    print("take off complete")
-    while count < 31:
-        line = lora_data.readline()
-        line = line.decode("utf-8")
-        length_data = len(line)
-        print(line)
-        print(count)
-        output_file.write(line)
-        if(length_data == 11):
-            count = count + 1
-    # is_checked_5m = True
-    print("Now let's land")
-    vehicle.mode = VehicleMode("LAND")  
-    vehicle.close()
+    now = time.time()
+    future = now + 120
+    while time.time() < future:
+        lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1)  
+        write_to_file_path = "output_5m"
+        #is_checked_5m = False
+        # for i in write_to_file_path:
+        output_file = open(write_to_file_path, "w+")
+        count = 1
+        arm_and_takeoff(3) 
+        print("take off complete")
+        while count < 31:
+            line = lora_data.readline()
+            line = line.decode("utf-8")
+            length_data = len(line)
+            print(line)
+            print(count)
+            output_file.write(line)
+            if(length_data == 11):
+                count = count + 1
+        # is_checked_5m = True
+        print("Now let's land")
+        vehicle.mode = VehicleMode("LAND")  
+        vehicle.close()   
+    if count < 31:
+        print("Now let's land")
+        vehicle.mode = VehicleMode("LAND")  
+        vehicle.close()   
    
 if __name__ == "__main__":
     main()

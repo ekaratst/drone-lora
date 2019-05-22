@@ -2,11 +2,6 @@ from dronekit import connect, VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
 import time
 
-#import argparse
-#parser = argparse.ArgumentParser()
-#parser.add_argument('--connect', default='127.0.0.1:14550')
-#args = parser.parse_args()
-
 # Connect to the vehicle
 connection_string = "/dev/ttyACM0"
 baud_rate = 57600
@@ -33,7 +28,7 @@ def arm_and_takeoff(aTargetAltitude):
 
     #check that vehicle has reached takeoff altitude
     while True:
-        current_altitude =  vehicle.location.global_relative_frame.alt
+    current_altitude =  vehicle.location.global_relative_frame.alt
         print(" Altitude: %f  Desired: %f" %(current_altitude, aTargetAltitude))
         # Break and return from function just below target altitude
         if current_altitude >= aTargetAltitude*0.95:
@@ -54,4 +49,5 @@ vehicle.mode = VehicleMode("LAND")
 
 #close vehicle object
 vehicle.close()
+
 
