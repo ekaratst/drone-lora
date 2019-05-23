@@ -45,14 +45,14 @@ void setup()
   rf95.setTxPower(23, false);
 }
 
-int16_t packetnum = 1;  // packet counter, we increment per xmission
+int16_t packetnum = 1;  
 
 void loop()
 {
   char tstr[5];
   char hstr[5];
   
-  delay(2000); // Wait 1 second between transmits, could also 'sleep' here!
+  delay(2000); 
    
   float h = dht.readHumidity();
   float t = dht.readTemperature();

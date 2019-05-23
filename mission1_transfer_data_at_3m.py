@@ -11,7 +11,7 @@ print('Connecting to Vehicle on: %s' %connection_string)
 vehicle = connect(connection_string, baud=baud_rate, wait_ready=True)
 
 max_packets = 10
-is_rssi = 9  #tansfer completed 1 packet
+is_rssi = 11  #tansfer completed 1 packet
 
 def arm_and_takeoff(aTargetAltitude):
     print("Basic pre-arm checks")
@@ -57,7 +57,7 @@ def main():
             is_completed_data = False
             break
         line = lora_data.readline()
-        line = line.decode("utf-8").strip()
+        line = line.decode("utf-8")
         length_data = len(line)
         print(line)
         print(count)

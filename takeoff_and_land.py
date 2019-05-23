@@ -45,8 +45,8 @@ def arm_and_takeoff(aTargetAltitude):
 arm_and_takeoff(3)
 print("take off complete")
 
-# Hover for 5 seconds
-time.sleep(5)
+# Hover for 90 seconds
+time.sleep(90)
 
 # landed
 print("Now let's land")
