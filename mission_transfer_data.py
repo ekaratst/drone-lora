@@ -1,12 +1,16 @@
 from dronekit import connect, VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
 import time
+import codecs
 
 # Connect to the vehicle
 connection_string = "/dev/ttyACM0"
 baud_rate = 57600
 print('Connecting to Vehicle on: %s' %connection_string)
 vehicle = connect(connection_string, baud=baud_rate, wait_ready=True)
+
+max_packets = 10
+is_rssi = 9  #tansfer completed 1 packet
 
 def arm_and_takeoff(aTargetAltitude):
     print("Basic pre-arm checks")
@@ -53,27 +57,27 @@ def change_altitude(aTargetAltitude):
 def tansfer_data_at_target_altitude(loraConnection, outputFile, aTargetAltitude):
     lora_data = loraConnection
     write_to_file_path = outputFile
-    output_file = open(write_to_file_path, "w+")
+    output_file = codecs.open(write_to_file_path, 'w', encoding='utf-8')
     count = 1
     arm_and_takeoff(aTargetAltitude) 
     print("take off complete")
     now = time.time()
     future = now + 120
     print("Stopwatch has been set for 2 mins.")
-    while count < 31:
+    while count <= max_packets:
         if time.time() >= future:
             print("..timeout..!!")
             is_completed_data = False
             break
         line = lora_data.readline()
-        line = line.decode("utf-8")
+        line = line.decode("utf-8").strip()
         length_data = len(line)
         print(line)
         print(count)
         output_file.write(line)
-        if(length_data == 11):
+        if(length_data == is_rssi):
             count = count + 1
-    if count >= 31:
+    if count > max_packets:
         is_completed_data = True
     return is_completed_data
     

@@ -1,17 +1,17 @@
 from dronekit import connect, VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
 import time
-import serial
-import codecs
+
+#import argparse
+#parser = argparse.ArgumentParser()
+#parser.add_argument('--connect', default='127.0.0.1:14550')
+#args = parser.parse_args()
 
 # Connect to the vehicle
 connection_string = "/dev/ttyACM0"
 baud_rate = 57600
 print('Connecting to Vehicle on: %s' %connection_string)
 vehicle = connect(connection_string, baud=baud_rate, wait_ready=True)
-
-max_packets = 10
-is_rssi = 9  #tansfer completed 1 packet
 
 def arm_and_takeoff(aTargetAltitude):
     print("Basic pre-arm checks")
@@ -41,32 +41,33 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
 
+def change_altitude(aTargetAltitude):
+    print("Change altitude")
+    vehicle.simple_takeoff(aTargetAltitude) # Take off to target altitude
 
-def main():
-    lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1)  
-    write_to_file_path = "output_5m"
-    output_file = codecs.open(write_to_file_path, 'w', encoding='utf-8')
-    count = 1
-    arm_and_takeoff(3) 
-    print("take off complete")
-    now = time.time()
-    future = now + 90
-    while count <= max_packets:
-        if time.time() >= future:
-            print("..timeout..!!")
-            is_completed_data = False
+    #check that vehicle has reached takeoff altitude
+    while True:
+    current_altitude =  vehicle.location.global_relative_frame.alt
+        print(" Altitude: %f  Desired: %f" %(current_altitude, aTargetAltitude))
+        # Break and return from function just below target altitude
+        if current_altitude >= aTargetAltitude*0.95:
+            print("Reached target altitude")
             break
-        line = lora_data.readline()
-        line = line.decode("utf-8").strip()
-        length_data = len(line)
-        print(line)
-        print(count)
-        output_file.write(line)
-        if(length_data == is_rssi):
-            count = count + 1
-    print("Now let's land")
-    vehicle.mode = VehicleMode("LAND")  
-    vehicle.close()   
-   
-if __name__ == "__main__":
-    main()
+        time.sleep(1)
+
+# Initialize the take off sequence to 3m
+arm_and_takeoff(3)
+print("take off complete")
+
+# Hover for 5 seconds
+time.sleep(5)
+
+change_altitude(5)
+time.sleep(5)
+# landed
+print("Now let's land")
+vehicle.mode = VehicleMode("LAND")
+
+#close vehicle object
+vehicle.close()
+
