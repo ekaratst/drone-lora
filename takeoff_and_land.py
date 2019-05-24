@@ -1,6 +1,7 @@
 from dronekit import connect, VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
 import time
+import sys
 
 #import argparse
 #parser = argparse.ArgumentParser()
@@ -41,12 +42,24 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
 
-# Initialize the take off sequence to 3m
-arm_and_takeoff(3)
+
+altitude = input('Enter altitude in metre as an integer: ')
+if altitude > 15:
+    print("Please enter time <= 15 metre.")
+    exit()
+stopwatch = input('Enter time in seconds as an integer: ')
+if stopwatch > 900:
+    print("Please enter time <= 900secs.")
+    exit()
+now = time.time()
+future = now + stopwatch
+
+# Initialize the take off sequence to target altitude(metre)
+arm_and_takeoff(altitude)
 print("take off complete")
 
 # Hover for 90 seconds
-time.sleep(90)
+time.sleep(stopwatch)
 
 # landed
 print("Now let's land")
@@ -54,4 +67,6 @@ vehicle.mode = VehicleMode("LAND")
 
 #close vehicle object
 vehicle.close()
+    
+
 
