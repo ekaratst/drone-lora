@@ -41,16 +41,23 @@ def arm_and_takeoff(aTargetAltitude):
             break
         time.sleep(1)
 
-
 def main():
-    lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1)  
+    lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1) 
     write_to_file_path = "output_5m"
     output_file = codecs.open(write_to_file_path, 'w', encoding='utf-8')
     count = 1
-    arm_and_takeoff(3) 
+    altitude = input('Enter altitude in metre as an integer: ')
+    if altitude > 15:
+        print("Please enter time <= 15 metre.")
+        exit()
+    stopwatch = input('Enter time in seconds as an integer: ')
+    if stopwatch > 900:
+        print("Please enter time <= 900secs.")
+        exit()
+    arm_and_takeoff(altitude) 
     print("take off complete")
     now = time.time()
-    future = now + 90
+    future = now + stopwatch
     while count <= max_packets:
         if time.time() >= future:
             print("..timeout..!!")
