@@ -43,7 +43,7 @@ def arm_and_takeoff(aTargetAltitude):
 
 def main():
     lora_data = serial.Serial("/dev/ttyACM1", 9600, timeout=1) 
-    write_to_file_path = "output_5m"
+    write_to_file_path = "output.txt"
     output_file = codecs.open(write_to_file_path, 'w', encoding='utf-8')
     count = 1
     altitude = input('Enter altitude in metre as an integer: ')
